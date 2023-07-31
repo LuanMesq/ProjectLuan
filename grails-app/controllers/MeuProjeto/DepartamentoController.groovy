@@ -11,13 +11,17 @@ class DepartamentoController {
     def index() {
         def departamentos = departamentoService.listaDepartamento()
         // Somente os departamentos, sem o relacionamento.
-        def departamentosComDadosBasicos = departamentos.collect { departamento ->
-            [
-                    id: departamento.id,
-                    nome: departamento.nome
-            ]
+        if (departamentos) {
+            def departamentosComDadosBasicos = departamentos.collect { departamento ->
+                [
+                        id: departamento.id,
+                        nome: departamento.nome
+                ]
+            }
+            render departamentosComDadosBasicos as JSON
+        } else {
+            render "Lista de departamentos não encontrada."
         }
-        render departamentosComDadosBasicos as JSON
     }
 
     def show(Long id) {
@@ -29,24 +33,38 @@ class DepartamentoController {
                     nome: departamento.nome
             ]
             render departamentoSimplificado as JSON
+        } else {
+            render "Lista de departamentos não encontrada."
         }
     }
 
     def save() {
         def departamentoData = request.JSON
         def departamento = departamentoService.criaRegdepartamento(departamentoData)
-        render departamento as JSON
+        if (departamento) {
+            render departamento as JSON
+        } else {
+            render "Erro ao criar o departamento."
+        }
     }
 
     def update(Long id) {
         def departamentoData = request.JSON
         def departamento = departamentoService.atzDepartamento(id, departamentoData)
-        render departamento as JSON
+        if (departamento) {
+            render departamento as JSON
+        } else {
+            render "Erro ao atualizar o departamento."
+        }
     }
 
     def delete(Long id) {
         def departamento = departamentoService.excluir(id)
-        render departamento as JSON
+        if (departamento) {
+            render departamento as JSON
+        } else {
+            render "Erro ao excluir o departamento."
+        }
     }
 }
 
